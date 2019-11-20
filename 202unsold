@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+
+import sys
+import math
+import argparse
+
+
+def manageHelpFlag():
+    if (sys.argv[1] == "-h"):
+        print("""USAGE
+        ./202unsold a b
+
+DESCRIPTION
+        a   constant computed from the past results
+        b   constant computed from the past results""")
+        sys.exit(0)
+
+
+def calculate(x, y, a, b):
+    return ((a - x) * (b - y)) / ((5 * a - 150) * (5 * b - 150))
+
+
+def calculate_all(y, a, b):
+    array = []
+    if y == 60:
+        array.append(calculate(10, 10, a, b) + calculate(10, 20, a, b) + calculate(10, 30, a, b) + calculate(10, 40, a, b) + calculate(10, 50, a, b))
+        array.append(calculate(20, 10, a, b) + calculate(20, 20, a, b) + calculate(20, 30, a, b) + calculate(20, 40, a, b) + calculate(20, 50, a, b))
+        array.append(calculate(30, 10, a, b) + calculate(30, 20, a, b) + calculate(30, 30, a, b) + calculate(30, 40, a, b) + calculate(30, 50, a, b))
+        array.append(calculate(40, 10, a, b) + calculate(40, 20, a, b) + calculate(40, 30, a, b) + calculate(40, 40, a, b) + calculate(40, 50, a, b))
+        array.append(calculate(50, 10, a, b) + calculate(50, 20, a, b) + calculate(50, 30, a, b) + calculate(50, 40, a, b) + calculate(50, 50, a, b))
+    else:
+        array.append(calculate(10, y, a, b))
+        array.append(calculate(20, y, a, b))
+        array.append(calculate(30, y, a, b))
+        array.append(calculate(40, y, a, b))
+        array.append(calculate(50, y, a, b))
+    return array
+
+def calculate_variance(a, array):
+    nb = 0
+    for i in range(10, 60, 10):
+        nb += i ** 2 * ((a - i) / ((5 * a) - 150))
+    return nb - (array ** 2)
+
+def game(args):
+    print("------------------------------------------------------------")
+    print("\tX=10\tX=20\tX=30\tX=40\tX=50\tY law")
+    array1 = calculate_all(10, args.a, args.b)
+    arrayy = []
+    arrayy.append(array1[0] + array1[1] + array1[2] + array1[3] + array1[4])
+    print("Y=10", "%.3f"%array1[0], "%.3f"%array1[1], "%.3f"%array1[2], "%.3f"%array1[3], "%.3f"%array1[4], "%.3f"%arrayy[0], sep='\t')
+    array2 = calculate_all(20, args.a, args.b)
+    arrayy.append(array2[0] + array2[1] + array2[2] + array2[3] + array2[4])
+    print("Y=20", "%.3f"%array2[0], "%.3f"%array2[1], "%.3f"%array2[2], "%.3f"%array2[3], "%.3f"%array2[4], "%.3f"%arrayy[1], sep='\t')
+    array3 = calculate_all(30, args.a, args.b)
+    arrayy.append(array3[0] + array3[1] + array3[2] + array3[3] + array3[4])
+    print("Y=30", "%.3f"%array3[0], "%.3f"%array3[1], "%.3f"%array3[2], "%.3f"%array3[3], "%.3f"%array3[4], "%.3f"%arrayy[2], sep='\t')
+    array4 = calculate_all(40, args.a, args.b)
+    arrayy.append(array4[0] + array4[1] + array4[2] + array4[3] + array4[4])
+    print("Y=40", "%.3f"%array4[0], "%.3f"%array4[1], "%.3f"%array4[2], "%.3f"%array4[3], "%.3f"%array4[4], "%.3f"%arrayy[3], sep='\t')
+    array5 = calculate_all(50, args.a, args.b)
+    arrayy.append(array5[0] + array5[1] + array5[2] + array5[3] + array5[4])
+    print("Y=50", "%.3f"%array5[0], "%.3f"%array5[1], "%.3f"%array5[2], "%.3f"%array5[3], "%.3f"%array5[4], "%.3f"%arrayy[4], sep='\t')
+    array6 = calculate_all(60, args.a, args.b)
+    print("X law", "%.3f"%array6[0], "%.3f"%array6[1], "%.3f"%array6[2], "%.3f"%array6[3], "%.3f"%array6[4], 1, sep='\t')
+    print("------------------------------------------------------------")
+    print("z\t20\t30\t40\t50\t60\t70\t80\t90\t100\ttotal")
+    array7 = []
+    array7.append(calculate(10, 10, args.a, args.b))
+    array7.append(array2[0] + array1[1])
+    array7.append(array3[0] + array2[1] + array1[2])
+    array7.append(array4[0] + array3[1] + array2[2] + array1[3])
+    array7.append(array5[0] + array4[1] + array3[2] + array2[3] + array1[4])
+    array7.append(array5[1] + array4[2] + array3[3] + array2[4])
+    array7.append(array5[2] + array4[3] + array3[4])
+    array7.append(array5[3] + array4[4])
+    array7.append(array5[4])
+    print("p(Z=z)", "%.3f"%array7[0], "%.3f"%array7[1], "%.3f"%array7[2], "%.3f"%array7[3], "%.3f"%array7[4], "%.3f"%array7[5], "%.3f"%array7[6], "%.3f"%array7[7], "%.3f"%array7[8], 1, sep='\t')
+    print("------------------------------------------------------------")
+    arrayExp = []
+    arrayExp.append(array6[0] * 10 + array6[1] * 20 + array6[2] * 30 + array6[3] * 40 + array6[4] * 50)
+    arrayExp.append(arrayy[0] * 10 + arrayy[1] * 20 + arrayy[2] * 30 + arrayy[3] * 40 + arrayy[4] * 50)
+    arrayExp.append(array7[0] * 20 + array7[1] * 30 + array7[2] * 40 + array7[3] * 50 + array7[4] * 60 + array7[5] * 70 + array7[6] * 80 + array7[7] * 90 + array7[8] * 100)
+    print("expected value of X:", "%.1f"%arrayExp[0], sep='\t')
+    print("variance of X:\t", "%.1f"%calculate_variance(args.a, arrayExp[0]), sep='\t')
+    print("expected value of Y:", "%.1f"%arrayExp[1], sep='\t')
+    print("variance of Y:\t", "%.1f"%calculate_variance(args.b, arrayExp[1]), sep='\t')
+    print("expected value of Z:", "%.1f"%arrayExp[2], sep='\t')
+    print("variance of Z:\t", "%.1f"%(calculate_variance(args.a, arrayExp[0]) + calculate_variance(args.b, arrayExp[1])), sep='\t')
+    print("------------------------------------------------------------")
+    return_value = 0
+    return return_value
+
+
+def my_parser():
+    parser = argparse.ArgumentParser(description='Sample argparse py', usage=manageHelpFlag())
+    parser.add_argument("a", type=int)
+    parser.add_argument("b", type=int)
+    return parser.parse_args()
+
+
+def unsold():
+    try:
+        args = my_parser()
+    except:
+        sys.exit(84)
+    return args
+
+
+def main():
+    args = unsold()
+    if args.a <= 50 or args.b <= 50:
+        sys.exit(84)
+    game(args)
+    sys.exit(0)
+
+
+main()
